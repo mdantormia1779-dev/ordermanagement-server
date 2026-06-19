@@ -79,6 +79,17 @@ app.post("/login", async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(401).send("Invalid credentials");
 
+     // 🔥 ADMIN → direct login
+    if (user.role === "admin") {
+      return res.send({
+        message: "Admin login success",
+        user: {
+          ...user,
+          password: undefined,
+        },
+      });
+    }
+
     // 🔥 APPROVAL CHECK (ONLY FOR USER ROLE)
     if (user.role === "user") {
       if (!user.isApproved) {
